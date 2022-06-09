@@ -1,0 +1,33 @@
+name: Push Docker Image to ECR
+
+on:
+push:
+branches: main
+jobs:
+build:
+runs-on: ubuntu- latest
+steps:
+
+~ name: Configure AWS Credentials
+uses: aws-actions/configure-aws-credentials@v1
+with:
+aws-access-key-id: ${{ secrets.AWS ACCESS KEY ID }}
+aws-secret-access-key: S{{ secrets. AWS_SECRET_ACCESS_KEY }}
+aws-region: us-east-1.
+
+= name: Log in to Amazon ECR
+id: login-ecr
+uses: aws-actions/amazon-ecr-login@v1
+
+- name: Build, tag, and push image to Amazon ECR
+env:
+ECR REGISTRY: S{{ steps. login-ecr.outputs.registry }}
+ECR REPOSITORY: S{{ secrets.ECR REPOSITORY }}
+IMAGE_TAG: ${{ github.sha }}
+run: |
+docker build -t SECR_REGISTRY/SECR_REPOSITORY:$IMAGE_TAG .
+docker push SECR_REGISTRY/SECR_REPOSITORY: SINAGE_TAG
+
+= name: Log out of Amazon ECR
+if: always()
+run: docker logout S{{ steps. login-ecr.outputs.registry }}
